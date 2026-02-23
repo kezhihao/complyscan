@@ -76,7 +76,7 @@ const LICENSE_DATABASE: Record<string, LicenseInfo> = {
     compatibility: ['MIT', 'Apache-2.0', 'BSD', 'LGPL', 'GPL'],
   },
   'LGPL-3.0': {
-    spdcId: 'LGPL-3.0',
+    spdxId: 'LGPL-3.0',
     name: 'GNU Lesser General Public License v3.0',
     type: 'weak-copyleft',
     risks: ['static linking requires source disclosure'],

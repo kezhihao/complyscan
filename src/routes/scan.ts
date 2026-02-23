@@ -3,7 +3,7 @@
  */
 
 import { Hono } from 'hono';
-import type { ScanRequest, ScanResult } from '../types';
+import type { ScanRequest, ScanResult, Env } from '../types';
 
 const scanRouter = new Hono<{ Bindings: Env }>();
 

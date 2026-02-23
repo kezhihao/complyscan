@@ -3,8 +3,9 @@
  */
 
 import { Hono } from 'hono';
+import type { Env } from '../types';
 
-const healthRouter = new Hono();
+const healthRouter = new Hono<{ Bindings: Env }>();
 
 healthRouter.get('/', (c) => {
   return c.json({

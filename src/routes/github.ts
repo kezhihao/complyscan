@@ -4,6 +4,7 @@
  */
 
 import { Hono } from 'hono';
+import type { Env } from '../types';
 import { verifySignature } from '../lib/github';
 
 const githubRouter = new Hono<{ Bindings: Env }>();
@@ -68,7 +69,11 @@ githubRouter.get('/callback', async (c) => {
     }),
   });
 
-  const tokenData = await tokenResponse.json();
+  const tokenData = await tokenResponse.json() as {
+    error?: string;
+    error_description?: string;
+    access_token?: string;
+  };
 
   if (tokenData.error) {
     return c.json({ error: tokenData.error_description }, 400);
@@ -82,7 +87,11 @@ githubRouter.get('/callback', async (c) => {
     },
   });
 
-  const githubUser = await userResponse.json();
+  const githubUser = await userResponse.json() as {
+    id: number;
+    login: string;
+    avatar_url?: string;
+  };
 
   // Store user in database (or create/update)
   // In production: hash token, store securely

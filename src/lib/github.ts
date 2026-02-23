@@ -1,28 +1,63 @@
 /**
  * GitHub utility functions
+ * Compatible with Cloudflare Workers (Web Crypto API)
  */
-
-import { crypto } from 'crypto';
-
-const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET || '';
 
 /**
- * Verify GitHub webhook signature
+ * Verify GitHub webhook signature using Web Crypto API
  */
-export function verifySignature(
+export async function verifySignature(
   payload: string,
   signature: string,
   secret: string
-): boolean {
-  const expectedSignature = `sha256=${crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex')}`;
+): Promise<boolean> {
+  try {
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(secret);
 
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  );
+    // Import secret key for HMAC
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw',
+      keyData,
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    // Sign the payload
+    const signatureBuffer = await crypto.subtle.sign(
+      'HMAC',
+      cryptoKey,
+      encoder.encode(payload)
+    );
+
+    // Convert to hex string
+    const expectedSignature = 'sha256=' +
+      Array.from(new Uint8Array(signatureBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+
+    // Constant-time comparison
+    return timingSafeEqual(signature, expectedSignature);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Constant-time string comparison to prevent timing attacks
+ */
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) {
+    return false;
+  }
+
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+
+  return result === 0;
 }
 
 /**
@@ -49,7 +84,7 @@ export async function fetchRepoTree(
     throw new Error(`GitHub API error: ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as { tree?: any[] };
   return data.tree || [];
 }
 
@@ -77,10 +112,15 @@ export async function fetchFileContent(
     throw new Error(`GitHub API error: ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as { content: string };
 
-  // Decode base64 content
-  return Buffer.from(data.content, 'base64').toString('utf-8');
+  // Decode base64 content using Web API
+  const binaryString = atob(data.content);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return new TextDecoder().decode(bytes);
 }
 
 /**

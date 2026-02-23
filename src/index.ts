@@ -6,6 +6,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import type { Env } from './types';
 
 // Routes
 import healthRouter from './routes/health';

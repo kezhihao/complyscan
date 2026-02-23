@@ -25,11 +25,8 @@ bucket_name = "complyscan-storage"  # Run: wrangler r2 bucket create complyscan-
 binding = "CACHE"
 id = "YOUR_KV_ID"  # Run: wrangler kv namespace create complyscan-cache
 
-# Workers Analytics (optional)
-[analytics]
-enabled = true
-
 # CORS settings for GitHub integration
-[routes]
-pattern = "api.complyscan.com/*"
-zone_name = "complyscan.com"
+# Routes configuration - uncomment when using custom domain
+# [[routes]]
+# pattern = "api.complyscan.com/*"
+# zone_name = "complyscan.com"

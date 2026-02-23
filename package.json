@@ -1,0 +1,27 @@
+{
+  "name": "complyscan",
+  "version": "0.1.0",
+  "description": "Small team code compliance scanning - 1/3 the price of Snyk",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest",
+    "lint": "eslint src/",
+    "format": "prettier --write ."
+  },
+  "keywords": ["security", "compliance", "license", "scanning", "github-actions"],
+  "author": "Auto Company",
+  "license": "MIT",
+  "dependencies": {
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "wrangler": "^3.94.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2"
+  }
+}

@@ -1,0 +1,35 @@
+# ComplyScan - License & Security Scanning
+# Add this workflow to your repository to enable automatic scanning
+
+name: ComplyScan
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  complyscan:
+    name: ComplyScan Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run ComplyScan
+        uses: complyscan/action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: Specify your project license
+          # project-license: MIT
+          # Optional: Include dev dependencies
+          # include-dev: false

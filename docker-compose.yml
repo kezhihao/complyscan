@@ -1,0 +1,15 @@
+# Docker Compose for local development
+
+version: '3.8'
+
+services:
+  complyscan:
+    build: .
+    ports:
+      - "8787:8787"
+    environment:
+      - ENVIRONMENT=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev

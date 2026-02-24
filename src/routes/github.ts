@@ -9,6 +9,27 @@ import { verifySignature } from '../lib/github';
 
 const githubRouter = new Hono<{ Bindings: Env }>();
 
+// Simple in-memory session store (MVP)
+// In production: use KV or D1 database
+const sessionStore = new Map<string, { githubToken: string; userId: number; createdAt: number }>();
+
+// Generate session token and store GitHub token
+function createSession(githubToken: string, userId: number): string {
+  const sessionToken = crypto.randomUUID();
+  sessionStore.set(sessionToken, {
+    githubToken,
+    userId,
+    createdAt: Date.now(),
+  });
+  return sessionToken;
+}
+
+// Get GitHub token from session
+function getGithubToken(sessionToken: string): string | null {
+  const session = sessionStore.get(sessionToken);
+  return session?.githubToken || null;
+}
+
 // POST /api/github/webhook - GitHub webhook handler
 githubRouter.post('/webhook', async (c) => {
   const signature = c.req.header('X-Hub-Signature-256');
@@ -93,8 +114,8 @@ githubRouter.get('/callback', async (c) => {
     avatar_url?: string;
   };
 
-  // Store user in database (or create/update)
-  // In production: hash token, store securely
+  // Create session token and store GitHub token
+  const sessionToken = createSession(tokenData.access_token!, githubUser.id);
 
   return c.json({
     user: {
@@ -102,7 +123,7 @@ githubRouter.get('/callback', async (c) => {
       login: githubUser.login,
       avatar_url: githubUser.avatar_url,
     },
-    token: tokenData.access_token, // In production: return session token, not raw GitHub token
+    token: sessionToken,
   });
 });
 

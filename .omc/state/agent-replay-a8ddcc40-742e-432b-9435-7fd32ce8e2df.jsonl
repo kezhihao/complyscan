@@ -1,0 +1,7 @@
+{"t":0,"agent":"a31dced","agent_type":"everything-claude-code:architect","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a42b147","agent_type":"everything-claude-code:code-reviewer","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"aa3cd45","agent_type":"everything-claude-code:security-reviewer","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a31dced","agent_type":"everything-claude-code:architect","event":"agent_stop","success":true,"duration_ms":40787}
+{"t":0,"agent":"a42b147","agent_type":"everything-claude-code:code-reviewer","event":"agent_stop","success":true,"duration_ms":46125}
+{"t":0,"agent":"aa3cd45","agent_type":"everything-claude-code:security-reviewer","event":"agent_stop","success":true,"duration_ms":58963}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"oh-my-claudecode:cancel"}

@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "name": "complyscan",
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/server.ts"
+    }
+  ],
+  "env": {
+    "DATABASE_PATH": "@database-path",
+    "STORAGE_TYPE": "memory",
+    "CACHE_TYPE": "memory"
+  }
+}

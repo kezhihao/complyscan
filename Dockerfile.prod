@@ -1,0 +1,19 @@
+# ComplyScan Production Dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install production dependencies (tsx needed for running .ts files)
+COPY package*.json ./
+RUN npm ci --omit=dev && npm install tsx --omit=dev
+
+# Copy source
+COPY . .
+
+# Build TypeScript (type check only)
+RUN npm run build
+
+EXPOSE 3000
+
+# Use tsx to run directly (noEmit: true in tsconfig)
+CMD ["npx", "tsx", "src/server.ts"]
